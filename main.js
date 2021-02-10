@@ -14,8 +14,6 @@ function queryCartpage() {
 queryCartpage()
 
 function queryLocalStorage() {
-    // NOTE: ItemTotalNum. Code convention gg. Ko viết hoa S cuối (dùng List or Arr)
-    // NOTE: Do lúc đầu các query này là STRING rỗng >> parseINT ra false or JSON.parse ra false    
     item_totalNum = localStorage.getItem('item_totalNum');
     item_totalNum = parseInt(item_totalNum);
     
@@ -42,7 +40,7 @@ clickAddToCart()
 
 function cartTotalNum() {
     if (item_totalNum) {
-        item_totalNum = item_totalNum + 1;  // ??? cách 1: chọc từ dữ liệu expresion này
+        item_totalNum = item_totalNum + 1;
         localStorage.setItem('item_totalNum', item_totalNum);  // NOTE: tưởng tượng có 2 cột
         bell.innerText = item_totalNum;
     } else {
@@ -77,7 +75,7 @@ function cartProducts(p) {
     localStorage.setItem('item_cartS', JSON.stringify(item_cartS));
 }
 
-function cartTotalPrice(p) {  // ??? cách 2: chọc từ local storage
+function cartTotalPrice(p) {
     item_totalPrice = localStorage.getItem('item_totalPrice');
     item_totalPrice = parseInt(item_totalPrice);
     if (item_totalPrice) {
@@ -89,7 +87,6 @@ function cartTotalPrice(p) {  // ??? cách 2: chọc từ local storage
 
 function displayCarts() {
     let container = document.querySelector('.t-items');
-    // NOTE: container dùng để check lỗi hậu kỳ, do: nếu ko query dc, sẽ ko báo lỗi đâu
     if (item_cartS && container) {
         container.innerHTML ='';
         Object.values(item_cartS).map(x => {
@@ -219,7 +216,7 @@ function delDetail(i) {
             localStorage.setItem('item_totalPrice', item_totalPrice);
             totalPrice.innerText = item_totalPrice;
 
-            delete item_cartS[key[j]];  // sao bik dùng delete hay vại ???
+            delete item_cartS[key[j]];
             localStorage.setItem('item_cartS', JSON.stringify(item_cartS));
 
             location.reload();
