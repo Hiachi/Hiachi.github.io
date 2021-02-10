@@ -1,74 +1,71 @@
-// product: p , cart, item in local storage
+// p: product , c: cart, i: item in local storage
 
-// Data product --------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
-var ps = [];                                                                                // ARRAY OF OBJECT: ps[i]
-var arr = document.querySelectorAll('.product-card');
-for (let i=0; i<arr.length; i++) {
-    let p = {
-        id : i+1,
-        name : arr[i].querySelector('.product-card-name').innerText,
-        image : arr[i].querySelector('.product-card-img img').getAttribute('src'),
-        price : parseInt(arr[i].querySelector('.card-price span:nth-child(2)').innerText),
-        inCart : 0,
+// NOTE: ko let, var thì bell lại có thể dùng ở global !!!
+function queryCartpage() {
+    bell = document.querySelector('.header_navbar_icon_cart span');
+    totalNum = document.querySelector('.t-total span');
+    totalPrice = document.querySelector('.t-grandprice span');
+
+    nameS = document.querySelectorAll(".t-name b");
+    quantityS = document.querySelectorAll('.t-minusplus span');
+    subtotalS = document.querySelectorAll(".t-col5 span");
+    
+}
+queryCartpage()
+
+function queryLocalStorage() {
+    // NOTE: ItemTotalNum. Code convention gg. Ko viết hoa S cuối (dùng List or Arr)
+    // NOTE: Do lúc đầu các query này là STRING rỗng >> parseINT ra false or JSON.parse ra false    
+    item_totalNum = localStorage.getItem('item_totalNum');
+    item_totalNum = parseInt(item_totalNum);
+    
+    item_cartS = localStorage.getItem('item_cartS');  // NOTE: A STRING
+    item_cartS = JSON.parse(item_cartS);  // NOTE: OBJECT OF OBJECT
+    
+    item_totalPrice = localStorage.getItem('item_totalPrice');
+    item_totalPrice = parseInt(item_totalPrice); 
+}
+queryLocalStorage()
+
+// question 1,2,4 ------------------------------------------------
+function clickAddToCart() {
+    var queryAddToCarts = document.querySelectorAll('.t-addcart');
+    for (let i = 0; i < queryAddToCarts.length; i++) {
+        queryAddToCarts[i].addEventListener('click', () => {
+            cartTotalNum();
+            cartProducts(ps[i]);
+            cartTotalPrice(ps[i]);
+        })
     }
-    ps.push(p);
 }
+clickAddToCart()
 
-// Query from pages cart
-let nameS = document.querySelectorAll(".t-name b");
-
-let bell = document.querySelector('.header_navbar_icon_cart span');
-let totalNum = document.querySelector('.t-total span');
-
-let quantityS = document.querySelectorAll('.t-minusplus span');
-let subtotalS = document.querySelectorAll(".t-col5 span");
-let totalPrice = document.querySelector('.t-grandprice span');
-
-// Query from local storage 
-let item_totalNum = localStorage.getItem('item_totalNum'); item_totalNum = parseInt(item_totalNum);
-let item_cartS = localStorage.getItem('item_cartS'); item_cartS = JSON.parse(item_cartS);   // ALWAYS: A STRING    // OBJECT OF OBJECT
-    // ALWAYS: A STRING                                 // OBJECT OF OBJECT
-
-let item_totalPrice = localStorage.getItem('item_totalPrice'); item_totalPrice = parseInt(item_totalPrice);                                           
-
-// Click on homepage ---------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
-let carts = document.querySelectorAll('.t-addcart');
-for (let i=0; i<carts.length; i++) {
-    carts[i].addEventListener('click', () =>{
-        cart_totalNum();
-        cart_Products(ps[i]);
-        cart_totalPrice(ps[i]);
-    })
-}
-
-// 111 - cart_totalNum
-function cart_totalNum() {
-    let item_totalNum = localStorage.getItem('item_totalNum');                              // LƯU Ý: PHẢI CÓ , DO KO THỂ PARSEINT(RỖNG)
+function cartTotalNum() {
     if (item_totalNum) {
-        item_totalNum = parseInt(item_totalNum);
-        localStorage.setItem('item_totalNum',item_totalNum + 1);                            // tưởng tượng có 2 cột
-        bell.innerText = item_totalNum + 1;
+        item_totalNum = item_totalNum + 1;  // ??? cách 1: chọc từ dữ liệu expresion này
+        localStorage.setItem('item_totalNum', item_totalNum);  // NOTE: tưởng tượng có 2 cột
+        bell.innerText = item_totalNum;
     } else {
-        localStorage.setItem('item_totalNum',1);
+        item_totalNum = 1;
+        localStorage.setItem('item_totalNum', item_totalNum);
         bell.innerText = 1;
     }
 }
 
-function  onLoad() {                                                                        // LƯU Ý: F5, bell cart vẫn lưu số mới
+// Khi F5, bell cart vẫn lưu số mới (NOTE:)
+function  onLoad() {
     if (item_totalNum) {
         bell.innerText = item_totalNum;
     }
 }
 onLoad();
 
-// 222 - cart_Products
-function cart_Products(p) {
-    if (item_cartS != null) {
-        if (item_cartS[p.id] == undefined) {                                                // OBJECT OF OBJECT: item_cartS[i]
+function cartProducts(p) {
+    if (item_cartS) {
+        // NOTE: OBJECT OF OBJECT: item_cartS[i]
+        if (item_cartS[p.id] == undefined) {                                                
             item_cartS = {
-                ...item_cartS,                                                              // !!!
+                ...item_cartS,  // !!!
                 [p.id]: p
             }
         }
@@ -80,21 +77,20 @@ function cart_Products(p) {
     localStorage.setItem('item_cartS', JSON.stringify(item_cartS));
 }
 
-// 333 - cart_totalPrice
-function cart_totalPrice(p) {
-    let item_totalPrice = localStorage.getItem('item_totalPrice')                           // LƯU Ý: PHẢI CÓ , DO KO THỂ PARSEINT(RỖNG)
-    if (item_totalPrice != null) {
-        item_totalPrice = parseInt(item_totalPrice);
+function cartTotalPrice(p) {  // ??? cách 2: chọc từ local storage
+    item_totalPrice = localStorage.getItem('item_totalPrice');
+    item_totalPrice = parseInt(item_totalPrice);
+    if (item_totalPrice) {
         localStorage.setItem('item_totalPrice', item_totalPrice + p.price);
     } else {
         localStorage.setItem('item_totalPrice', p.price);
     }
 }
 
-// 444 - displayCarts
 function displayCarts() {
     let container = document.querySelector('.t-items');
-    if (item_cartS && container) {                                                              // ???
+    // NOTE: container dùng để check lỗi hậu kỳ, do: nếu ko query dc, sẽ ko báo lỗi đâu
+    if (item_cartS && container) {
         container.innerHTML ='';
         Object.values(item_cartS).map(x => {
             container.innerHTML += `
@@ -124,44 +120,32 @@ function displayCarts() {
                 </div>
             </div>
             `
+        })
         bell.innerText = item_totalNum;
         totalNum.innerText = item_totalNum;
 
         totalPrice.innerText = item_totalPrice;
-        })
     }
 }
 displayCarts();
 
-// Click ---------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
-// Query from pages cart                                                                    // LƯU Ý: PHẢI UPDATE, do lúc đặt biến có rỗng trong đó
-nameS = document.querySelectorAll(".t-name b");
-
-    // bell = document.querySelector('.header_navbar_icon_cart span');
-    // totalNum = document.querySelector('.t-total span');
-
-quantityS = document.querySelectorAll('.t-minusplus span');
-subtotalS = document.querySelectorAll(".t-col5 span");
-    // totalPrice = document.querySelector('.t-grandprice span');
-
-// UP-------------------------------------------------------------------------------------
+// question 3 ----------------------------------------------------
+// UPS
+queryCartpage()
 let upS = document.querySelectorAll('.fa-plus');
-for (let i=0; i<upS.length; i++) {
-    upS[i].addEventListener('click', () =>{
+for (let i = 0; i < upS.length; i++) {
+    upS[i].addEventListener('click', () => {
         upDetail(i);
     })
 }
 
 function upDetail(i) {
-    item_totalNum += 1;
-    localStorage.setItem('item_totalNum', item_totalNum);
+    localStorage.setItem('item_totalNum', item_totalNum += 1);
     bell.innerText = item_totalNum;
     totalNum.innerText = item_totalNum;
-
-    pName = nameS[i].innerText;
     
-    let key = Object.keys(item_cartS);                                                      // ko để chung chỗ dc ??? Query from local storage 
+    pName = nameS[i].innerText;
+    let key = Object.keys(item_cartS); // NOTE: trả về 1 array CURRENT
     for (j in key) {
         let itemId = parseInt(key[j]);
         let itemName = item_cartS[itemId].name;
@@ -178,24 +162,23 @@ function upDetail(i) {
     }
 }
 
-// Down-----------------------------------------------------------------------------------
+// DOWNS
 let downS = document.querySelectorAll('.fa-minus');
-for (let i=0; i<downS.length; i++) {
-    downS[i].addEventListener('click', () =>{
+for (let i = 0; i < downS.length; i++) {
+    downS[i].addEventListener('click', () => {
         downDetail(i);
     })
 }
 
 function downDetail(i) {
-    pName = nameS[i].innerText;                                                             // sao ko để let vẫn dc ???
-    let key = Object.keys(item_cartS);                                                      // sao bik dùng delete hay vại ???
+    pName = nameS[i].innerText;
+    let key = Object.keys(item_cartS);                                    
     for (j in key) {
         let itemId = parseInt(key[j]);
         let itemName = item_cartS[itemId].name;
         if (itemName == pName) {
             if (item_cartS[itemId].inCart > 0) {
-                item_totalNum -= 1;
-                localStorage.setItem('item_totalNum', item_totalNum);
+                localStorage.setItem('item_totalNum', item_totalNum -= 1);
                 bell.innerText = item_totalNum;
                 totalNum.innerText = item_totalNum;
 
@@ -212,10 +195,10 @@ function downDetail(i) {
     }
 }
 
-// Delete-------------------------------------------------------------------------------
-let arrDel = document.querySelectorAll('.t-col2 .t-gray');                               // ko nên có thẻ a khi bấm del :((
+// DELETE
+let arrDel = document.querySelectorAll('.t-col2 .t-gray');  // NOTE: ko nên có thẻ a khi bấm del :((
 for (let i=0; i<arrDel.length; i++) {
-    arrDel[i].addEventListener('click', () =>{
+    arrDel[i].addEventListener('click', () => {
         delDetail(i);
     })
 }
@@ -236,7 +219,7 @@ function delDetail(i) {
             localStorage.setItem('item_totalPrice', item_totalPrice);
             totalPrice.innerText = item_totalPrice;
 
-            delete item_cartS[key[j]];
+            delete item_cartS[key[j]];  // sao bik dùng delete hay vại ???
             localStorage.setItem('item_cartS', JSON.stringify(item_cartS));
 
             location.reload();

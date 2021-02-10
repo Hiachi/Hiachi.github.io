@@ -316,7 +316,7 @@ a.login_forget {    /* phải có a. !!! */
     justify-content: space-between; 
     width: 90%;
     max-width: 990px;
-    flex-wrap: 
+    flex-wrap: wrap;
 }
 
 .t-items {
@@ -612,4 +612,13 @@ div.footer_collumnc_top, .footer_collumnc_bottom {
 
 .t-name a:hover {
     text-decoration: underline;
+}
+
+/* ----------------------------- */
+.fa-minus:hover, .fa-plus:hover, 
+.t-col2 > .t-gray:hover {
+    color: var(--main-color);
+    font-weight: 600;
+    font-size: larger;
+    cursor: pointer;
 }
