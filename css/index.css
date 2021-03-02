@@ -49,16 +49,20 @@ body {
 }
 
 a {
+    font-family: Arial, Helvetica, sans-serif;
     text-decoration: underline;
     text-align: center;
-    color: white;
+    color: rgb(236, 32, 202);
     display: block;
     width: fit-content;
     margin-left: 15px;
+    font-size: 40px;
 }
+
 a:hover {
     transform: scale(1.2);
     font-style: italic;
+    font-size: 35px;
 }
 
 li {
