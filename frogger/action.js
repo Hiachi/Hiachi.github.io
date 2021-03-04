@@ -59,8 +59,13 @@ for (let i = 0; i <= 3; i++) {
 }
 
 const grounds = {
-  causeway2: new Ground (0, canvas.height - 2*unit, canvas.width, unit, "#8C3B1F"),
-  causeway1: new Ground (0, canvas.height - 8*unit, canvas.width, unit, "#8C3B1F"),
+  causeway2: new Ground (0, canvas.height - 8*unit, canvas.width, unit, "#8C3B1F"),
+  causeway1: new Ground (0, canvas.height - 2*unit, canvas.width, unit, "#8C3B1F"),
+  colpoint:  new Ground (0, canvas.height - unit   , canvas.width, unit, "black"),
+
+  water:     new Ground (0, 20 + unit             , canvas.width, 5*unit, "#1830AC"),
+  street:    new Ground (0, canvas.height - 7*unit, canvas.width, 5*unit, "black"),
+
   grass:     new Ground (0, 0, canvas.width, 20 + unit, "green" ),
 };
 
